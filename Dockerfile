@@ -17,18 +17,11 @@ CMD if test -z "${MYSQL_ENV_MYSQL_ROOT_PASSWORD}"; then \
       echo "You must link to a MySQL docker container: --link mysql-server:mysql" 1>&2; \
       exit 1; \
     fi; \
-    echo "wait for mysql to become ready..."; \
-    for ((i=0; i<20; ++i)); do \
-        if nmap -p ${SQL_PORT_3306_TCP_PORT} ${SQL_PORT_3306_TCP_ADDR} \
-            | grep -q ${SQL_PORT_3306_TCP_PORT}'/tcp open'; then \
-            break; \
-        fi; \
-        sleep 1; \
-    done; \
     if test -e /firstrun; then \
       echo "Configuration of Icinga Web ..."; \
       head -c 12 /dev/urandom | base64 > /etc/icingaweb2/setup.token; \
       chmod 0660 /etc/icingaweb2/setup.token; \
+      chown -R www-data.www-data /etc/icingaweb2; \
       sed -i 's,;\?date.timezone =.*,date.timezone = "'${TIMEZONE}'",g' \
              /etc/php5/apache2/php.ini; \
       mkdir /var/log/icingaweb2; \
