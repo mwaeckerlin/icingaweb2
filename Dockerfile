@@ -33,6 +33,9 @@ CMD if test -z "${MYSQL_ENV_MYSQL_ROOT_PASSWORD}"; then \
       echo "and enter the following token:"; \
       echo "  $(cat /etc/icingaweb2/setup.token)"; \
     fi; \
+    if test -f /run/apache2/apache2.pid; then \
+      rm /run/apache2/apache2.pid;
+    fi; \
     apache2ctl -DFOREGROUND
 
 EXPOSE 80
