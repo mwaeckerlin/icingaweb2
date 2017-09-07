@@ -8,7 +8,7 @@ If you want, you can link to a second mysql database to store your web interface
 
 This is an example setup with two databases:
         docker run -d --name icinga-mysql -e MYSQL_ROOT_PASSWORD=1234 mysql
-        docker run -d --name icinga --link icinga-mysql:mysql mwaeckerlin/icinga
+        docker run -d --name icinga --link icinga-mysql:mysql mwaeckerlin/icinga2ido
         docker run -d --name icingaweb-mysql -e MYSQL_ROOT_PASSWORD=1234 mysql
         docker run -d --name icingaweb-volume mwaeckerlin/icingaweb2 sleep infinity
         docker run -d --name icingaweb --link icinga-mysql:icingadb --link icingaweb-mysql:webdb --volumes-from icingaweb-volume -p 80:80 mwaeckerlin/icingaweb2
