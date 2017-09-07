@@ -119,7 +119,7 @@ function traperror() {
 # catch errors
 trap 'traperror "$? ${PIPESTATUS[@]}" $LINENO $BASH_LINENO "$BASH_COMMAND" "${FUNCNAME[@]}" "${FUNCTION}"' ERR SIGINT INT TERM EXIT
 
-##########################################################################################
+###########################################################################################
 
 if test -e /firstrun; then
     echo "Configuration of Icinga Web ..."
