@@ -3,6 +3,7 @@ Docker Image for Icinga2 with Web-Management
 
 Use [mwaeckerlin/icinga2ido](https://github.com/mwaeckerlin/icinga2ido) and [mwaeckerlin/icingaweb2](https://github.com/mwaeckerlin/icingaweb2) together with [mysql](https://hub.docker.com/r/_/mysql/) to get a complete icinga system monitoring with web gui and icinga director for configuration management.
 
+
 Usage
 -----
 
@@ -89,3 +90,11 @@ After login to icinga web, you must setup the director plugin:
         - `Run import` (wait for a while until background is white)
         - `Store configuration`
   - Icinga Director: do your configurations
+
+
+Icinga Director
+---------------
+
+Follow some tutorials to use icinga director. When you configured changes, don't forget to go to Deployments - Render config - Deploy to activate your changes.
+
+See, e.g. [Icinga 2 Director – erste Schritte und Nutzung](https://www.unixe.de/icinga2-director-erste-schritte-und-nutzung/) (German).
