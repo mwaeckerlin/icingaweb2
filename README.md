@@ -1,45 +1,91 @@
-# Docker Image to run Icinga2 Webinterface - attach to Icinga2 IDO Docker Container
+Docker Image for Icinga2 with Web-Management
+============================================
 
-This is the web user interface only to icinga2. First of all, you need a mwaeckerlin/icinga2ido docker container instance. See there for basic configuration.
+Use [mwaeckerlin/icinga2ido](https://github.com/mwaeckerlin/icinga2ido) and [mwaeckerlin/icingaweb2](https://github.com/mwaeckerlin/icingaweb2) together with [mysql](https://hub.docker.com/r/_/mysql/) to get a complete icinga system monitoring with web gui and icinga director for configuration management.
 
-You must at least link your container to the icinga2 ido mysql database and to get the volumes from the icimga2 ido container to be able to connect the web user interface to the icinga2 ido instance. 
+Usage
+-----
 
-If you want, you can link to a second mysql database to store your web interface configuration in a different database.
+First follow the steps in the [README.md in mwaeckerlin/icinga2ido](https://github.com/mwaeckerlin/icinga2ido/blob/master/README.md), then you have a running icinga server with a database that is prepared for the web frontend. So continue with this:
 
-This is an example setup with two databases:
-        docker run -d --name icinga-mysql -e MYSQL_ROOT_PASSWORD=1234 mysql
-        docker run -d --name icinga --link icinga-mysql:mysql mwaeckerlin/icinga2ido
-        docker run -d --name icingaweb-mysql -e MYSQL_ROOT_PASSWORD=1234 mysql
-        docker run -d --name icingaweb-volume mwaeckerlin/icingaweb2 sleep infinity
-        docker run -d --name icingaweb --link icinga-mysql:icingadb --link icingaweb-mysql:webdb --volumes-from icingaweb-volume -p 80:80 mwaeckerlin/icingaweb2
+        docker run -d --restart unless-stopped --name icingaweb-volumes \
+               mwaeckerlin/icingaweb2 sleep infinity
+        docker run -d --restart unless-stopped --name icingaweb \
+               -p 8080:80 \
+               --link icinga-mysql:mysql \
+               --link icinga:icinga \
+               --volumes-from icinga \
+               --volumes-from icingaweb-volumes \
+               mwaeckerlin/icingaweb2
 
-After you started the containers, head to http://localhost/icinga2/setup to interactively configure the web interface.
+See the log to get the next step, the passwords and the installatin token:
+
+        docker logs icinga
+        docker logs icingaweb
+
+As instructed in the logs, head to http://localhost:8080/icinga2/setup to interactively configure the web interface.
 
 With the above container configuration, you need to know the following parameter:
-  - Setup Token: See logs of mwaeckerlin/icingaweb2, e.g. `docker logs icinga-web`
-  - Authentication Typ: Database - here let's use container `web-mysql` (see above)
-  - Database Resource: (database is from container `web-mysql`, aliased to `webdb`)
-     - Database Type: MySQL
-     - Host: webdb (see above)
-     - Database Name: icingaweb (can be anything you want)
-     - Username: icingaweb (can be anything you want)
-     - Password: AnyThingYouWant (can be anything you want)
-  - Database Setup: (database is from container `web-mysql`, aliased to `webdb`)
-     - Username: root
-     - Password: 1234 (see `MYSQL_ROOT_PASSWORD` above)
-  - Administration: choose any username / password to login as administrator to the web interface
-  - Application Configuration:
-     - User Preference Storage Type: Database (recommended - goes to `web-mysql`)
-     - Logging Type: File (Syslog is not installed)
-     - File path: /var/log/icingaweb2/icingaweb2.log (this path is writable to apache)
-  - Monitoring IDO Resource: (database is from container `icinga-mysql`, aliased to `icingadb`)
-     - Database Type: MySQL
-     - Host: icingadb (see above)
-     - Database Name: icinga2 (see mwaeckerlin/icinga2ido, here see `database` in `docker log icinga`)
-     - Username: icinga2 (see mwaeckerlin/icinga2ido, here see `user` in `docker log icinga`)
-     - Password: (see mwaeckerlin/icinga2ido, here see `password` in `docker log icinga`)
-  - Command Transport: defaults are fine, thanks to `--volumes-from icinga`
-     - Transport Type: Local Command File
-     - Command File: /var/run/icinga2/cmd/icinga2.cmd
+  - Setup Token: See logs of mwaeckerlin/icingaweb2, e.g. `docker logs icingaweb`
+  - Authentication Type: Database (you could also use an LDAP server if you want)
+     - Resource Name: `icingaweb_db`, or whatever you want
+     - Database Type: `MySQL`
+     - Host: `mysql`, second part from `--link`
+     - Port: empty is fine
+     - Database Name: `icingaweb`, `Web database` from `docker logs icinga`
+     - Username: `icingaweb`, `Web database user` from `docker logs icinga`
+     - Password: …, `Web database password` from `docker logs icinga`
+     - Character Set: `utf8`
+  - Backend Name: `icingaweb2`, or whatever you want
+  - Administration:
+     - Username: your username to login to the web ui, whatever you want
+     - Password: your password to login to the web ui, whatever you want
+  - Application Configuration
+     - Show Stacktraces: checked, or whatever you want
+     - User Preference Storage Type: `Database`
+     - Logging Type: `File` (or `None`, but there's no `Syslog` daemon in docker)
+     - Logging Level: `Error` or whatever you want
+     - File path: `/var/log/icingaweb2/icingaweb2.log`, the default is fine
+  - Monitoring Backend:
+     - Backend Name: `icinga`, or whatever you want
+     - Backend Type: `IDO`
+  - Monitoring IDO Resource:
+     - Resource Name: `icinga_ido`, or whatever you want
+     - Database Type: `MySQL`
+     - Host: `mysql`, second part from `--link`
+     - Port: empty is fine
+     - Database Name: `icinga`, `MYSQL_ENV_MYSQL_DATABASE` from `docker logs icingaweb`
+     - Username: `icinga`, `MYSQL_ENV_MYSQL_USER` from `docker logs icingaweb`
+     - Password: …, `MYSQL_ENV_MYSQL_PASSWORD` from `docker logs icingaweb`
+     - Character Set: `utf8`
+  - Command Transport:
+     - Transport Name: `icinga2`, or whatever you want
+     - Command File: `/var/run/icinga2/cmd/icinga2.cmd` (this path is mandatory)
+  - Monitoring Security:
+     - Protected Custom Variables: `*pw*,*pass*,community` (default is fine)
 
-For everything else, the defaults are fine, or choose anything you want.
+After login to icinga web, you must setup the director plugin:
+
+  - Configuration - Resources - Create a New Resource
+     - Resource Type: SQL Database
+     - Resource Name: `director_db`, or whatever you want
+     - Database Type: `MySQL`
+     - Host: `mysql`, second part from `--link`
+     - Port: empty is fine
+     - Database Name: `director`, `Director database` from `docker logs icinga`
+     - Username: `director`, `Director database user` from `docker logs icinga`
+     - Password: …, `Director database password` from `docker logs icinga`
+     - Character Set: `utf8`
+  - Configuration - Modules - Director:
+     - Module: director - State: enable
+     - Configuration:
+        - DB Resource: `director_db`, as configured above
+        - `Create database schema` (wait for a while until background is white)
+        - Endpoint Name: … `Director endpoint` from `docker logs icinga`
+        - Icinga Host: `icinga`, second part from `--link`
+        - Port: `5665`, default is fine
+        - API user: `director`, `Director module user` from `docker logs icinga`
+        - Password: …, `Director module password` from `docker logs icinga`
+        - `Run import` (wait for a while until background is white)
+        - `Store configuration`
+  - Icinga Director: do your configurations

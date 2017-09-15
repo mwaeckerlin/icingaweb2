@@ -136,6 +136,10 @@ if test -e /firstrun; then
     echo "  http://localhost:80${WEBPATH}/setup"
     echo "and enter the following token:"
     echo "  $(cat /etc/icingaweb2/setup.token)"
+    echo "Database configurations:"
+    for db in $(env | grep MYSQL); do
+        echo "  - ${db/=/: }"
+    done
 fi
 if test -f /run/apache2/apache2.pid; then
     rm /run/apache2/apache2.pid;
