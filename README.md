@@ -33,9 +33,9 @@ With the above container configuration, you need to know the following parameter
      - Database Type: `MySQL`
      - Host: `mysql`, second part from `--link`
      - Port: empty is fine
-     - Database Name: `icingaweb`, `Web database` from `docker logs icinga`
-     - Username: `icingaweb`, `Web database user` from `docker logs icinga`
-     - Password: …, `Web database password` from `docker logs icinga`
+     - Database Name: `icingaweb`, `WEB_DB` or `Web database` from `docker logs icinga`
+     - Username: `icingaweb`, `WEB_USER:` or `Web database user` from `docker logs icinga`
+     - Password: …, `WEB_PW` or `Web database password` from `docker logs icinga`
      - Character Set: `utf8`
   - Backend Name: `icingaweb2`, or whatever you want
   - Administration:
@@ -55,9 +55,9 @@ With the above container configuration, you need to know the following parameter
      - Database Type: `MySQL`
      - Host: `mysql`, second part from `--link`
      - Port: empty is fine
-     - Database Name: `icinga`, `MYSQL_ENV_MYSQL_DATABASE` from `docker logs icingaweb`
-     - Username: `icinga`, `MYSQL_ENV_MYSQL_USER` from `docker logs icingaweb`
-     - Password: …, `MYSQL_ENV_MYSQL_PASSWORD` from `docker logs icingaweb`
+     - Database Name: `icinga`, `ICINGA_DB` or `Icinga database` from `docker logs icinga`
+     - Username: `icinga`, `ICINGA_USER` or `Icinga database user` from `docker logs icinga`
+     - Password: …, `ICINGA_PW` or `Icinga database password` from `docker logs icinga`
      - Character Set: `utf8`
   - Command Transport:
      - Transport Name: `icinga2`, or whatever you want
@@ -73,9 +73,9 @@ After login to icinga web, you must setup the director plugin:
      - Database Type: `MySQL`
      - Host: `mysql`, second part from `--link`
      - Port: empty is fine
-     - Database Name: `director`, `Director database` from `docker logs icinga`
-     - Username: `director`, `Director database user` from `docker logs icinga`
-     - Password: …, `Director database password` from `docker logs icinga`
+     - Database Name: `director`, `DIRECTOR_DB` or `Director database` from `docker logs icinga`
+     - Username: `director`, `DIRECTOR_USER` or `Director database user` from `docker logs icinga`
+     - Password: …, `DIRECTOR_PW` or `Director database password` from `docker logs icinga`
      - Character Set: `utf8`
   - Configuration - Modules - Director:
      - Module: director - State: enable
@@ -85,8 +85,8 @@ After login to icinga web, you must setup the director plugin:
         - Endpoint Name: … `Director endpoint` from `docker logs icinga`
         - Icinga Host: `icinga`, second part from `--link`
         - Port: `5665`, default is fine
-        - API user: `director`, `Director module user` from `docker logs icinga`
-        - Password: …, `Director module password` from `docker logs icinga`
+        - API user: `director`, `DIRECTOR_USER` or `Director module user` from `docker logs icinga`
+        - Password: …, `DIRECTOR_PW` or `Director module password` from `docker logs icinga`
         - `Run import` (wait for a while until background is white)
         - `Store configuration`
   - Icinga Director: do your configurations
