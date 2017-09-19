@@ -144,4 +144,5 @@ fi
 if test -f /run/apache2/apache2.pid; then
     rm /run/apache2/apache2.pid;
 fi
+chmod o+rw /var/run/icinga2/cmd/icinga2.cmd
 apache2ctl -DFOREGROUND
