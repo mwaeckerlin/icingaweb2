@@ -98,3 +98,19 @@ Icinga Director
 Follow some tutorials to use icinga director. When you configured changes, don't forget to go to Deployments - Render config - Deploy to activate your changes.
 
 See, e.g. [Icinga 2 Director – erste Schritte und Nutzung](https://www.unixe.de/icinga2-director-erste-schritte-und-nutzung/) (German).
+
+
+Execute Over SSH
+----------------
+
+To execute check commands over SSH on a remote host, on that remote host create a user `nagios` and allow a password less key based login from the icinga server.
+
+On the target:
+```bash
+sudo apt install monitoring-plugins
+sudo useradd -m nagios
+sudo -Hu nagios mkdir ~nagios/.ssh
+sudo -Hu nagios tee -a ~nagios/.ssh/authorized_keys
+```
+
+Then paste the ssh public key shown in `docker logs icinga` and terminate with `ctrl+d`.
