@@ -111,6 +111,9 @@ sudo apt install monitoring-plugins
 sudo useradd -m nagios
 sudo -Hu nagios mkdir ~nagios/.ssh
 sudo -Hu nagios tee -a ~nagios/.ssh/authorized_keys
+cd /usr/lib/nagios/plugins/
+sudo wget https://raw.githubusercontent.com/hugme/Nag_checks/master/check_linux_memory
+sudo chmod +x check_linux_memory
 ```
 
 Then paste the ssh public key shown in `docker logs icinga` and terminate with `ctrl+d`.
