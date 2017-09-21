@@ -107,7 +107,7 @@ To execute check commands over SSH on a remote host, on that remote host create 
 
 On the target:
 ```bash
-sudo apt install monitoring-plugins
+sudo apt install monitoring-plugins bc
 cd /usr/lib/nagios/plugins/
 sudo wget https://raw.githubusercontent.com/hugme/Nag_checks/master/check_linux_memory
 sudo chmod +x check_linux_memory
