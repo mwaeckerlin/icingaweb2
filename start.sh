@@ -130,6 +130,7 @@ if test -e /firstrun; then
         /etc/php/7.0/apache2/php.ini
     test -d /var/log/icingaweb2 || mkdir -p /var/log/icingaweb2
     chown www-data.www-data /var/log/icingaweb2
+    sed -i 's,web_url = .*,web_url = ${GRAPHITE_WEB}' /etc/icingaweb2/modules/graphite/config.ini
     rm  /firstrun
     echo "**** Configuration done."
     echo "To setup, head your browser to (port can be different):"
@@ -140,6 +141,7 @@ if test -e /firstrun; then
     for db in $(env | grep MYSQL); do
         echo "  - ${db/=/: }"
     done
+    
 fi
 if test -f /run/apache2/apache2.pid; then
     rm /run/apache2/apache2.pid;

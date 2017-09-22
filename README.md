@@ -16,6 +16,7 @@ First follow the steps in the [README.md in mwaeckerlin/icinga2ido](https://gith
                --link icinga-mysql:mysql \
                --link icinga:icinga \
                --link icinga-carbon:carbon \
+               --link icinga-graphite:graphite \
                --volumes-from icinga \
                --volumes-from icingaweb-volumes \
                mwaeckerlin/icingaweb2
