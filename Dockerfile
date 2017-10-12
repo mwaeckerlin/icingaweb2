@@ -2,7 +2,6 @@ FROM mwaeckerlin/ubuntu-base
 MAINTAINER mwaeckerlin
 
 # requires: --link mysql:mysql
-ENV WEBPATH /icingaweb2
 ENV TIMEZONE "Europe/Zurich"
 ENV WEBROOT ""
 ENV GRAPHITE_WEB "http://graphite"
@@ -18,7 +17,6 @@ RUN cp -rv sample-config/icinga2/* /etc/icingaweb2/modules/graphite/
 RUN chown -R root:icingaweb2 /etc/icingaweb2/modules/graphite
 RUN chmod -R 2755 /etc/icingaweb2/modules/graphite
 RUN sed -i 's,web_url = .*,web_url = ${GRAPHITE_WEB}' /etc/icingaweb2/modules/graphite/config.ini
-RUN touch /firstrun
 
 ADD start.sh /start.sh
 CMD /start.sh

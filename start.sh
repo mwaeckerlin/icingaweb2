@@ -121,26 +121,32 @@ trap 'traperror "$? ${PIPESTATUS[@]}" $LINENO $BASH_LINENO "$BASH_COMMAND" "${FU
 
 ###########################################################################################
 
-if test -e /firstrun; then
-    echo "Configuration of Icinga Web ..."
-    head -c 12 /dev/urandom | base64 > /etc/icingaweb2/setup.token
-    chmod 0660 /etc/icingaweb2/setup.token
-    chown -R www-data.www-data /etc/icingaweb2
-    sed -i 's,;*date.timezone =.*,date.timezone = "'${TIMEZONE}'",g' \
-        /etc/php/7.0/apache2/php.ini
-    test -d /var/log/icingaweb2 || mkdir -p /var/log/icingaweb2
-    chown www-data.www-data /var/log/icingaweb2
-    sed -i 's,web_url = .*,web_url = ${GRAPHITE_WEB}' /etc/icingaweb2/modules/graphite/config.ini
-    rm  /firstrun
-    echo "**** Configuration done."
-    echo "To setup, head your browser to (port can be different):"
-    echo "  http://localhost:80${WEBPATH}/setup"
-    echo "and enter the following token:"
-    echo "  $(cat /etc/icingaweb2/setup.token)"
-    echo "Database configurations:"
-    for db in $(env | grep MYSQL); do
-        echo "  - ${db/=/: }"
-    done
+echo "Configuration of Icinga Web ..."
+head -c 12 /dev/urandom | base64 > /etc/icingaweb2/setup.token
+chmod 0660 /etc/icingaweb2/setup.token
+chown -R www-data.www-data /etc/icingaweb2
+sed -i 's,;*date.timezone =.*,date.timezone = "'${TIMEZONE}'",g' \
+    /etc/php/7.0/apache2/php.ini
+test -d /var/log/icingaweb2 || mkdir -p /var/log/icingaweb2
+chown www-data.www-data /var/log/icingaweb2
+sed -i 's,web_url = .*,web_url = ${GRAPHITE_WEB}' /etc/icingaweb2/modules/graphite/config.ini
+if test -z "${WEBROOT}"; then
+    sed -i 's/^Alias/#&/' /etc/apache2/conf-available/icingaweb2.conf
+    sed -i 's,^\( *DocumentRoot\).*,\1 /usr/share/icingaweb2/public,'/etc/apache2/sites-available/000-default.conf
+else
+    sed -i 's,^\Alias .*,Alias "'"${WEBROOT%/}"'",' /etc/apache2/conf-available/icingaweb2.conf
+    sed -i 's,^\( *DocumentRoot\).*,\1 /var/www/html,'/etc/apache2/sites-available/000-default.conf
+fi
+sed -i 's,^\( *RewriteBase\).*,\1'"${WEBROOT%/}"'/,' /etc/apache2/conf-available/icingaweb2.conf
+echo "**** Configuration done."
+echo "To setup, head your browser to (port can be different):"
+echo "  http://localhost:80${WEBROOT}/setup"
+echo "and enter the following token:"
+echo "  $(cat /etc/icingaweb2/setup.token)"
+echo "Database configurations:"
+for db in $(env | grep MYSQL); do
+    echo "  - ${db/=/: }"
+done
     
 fi
 if test -f /run/apache2/apache2.pid; then

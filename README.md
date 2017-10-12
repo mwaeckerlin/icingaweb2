@@ -26,7 +26,7 @@ See the log to get the next step, the passwords and the installatin token:
         docker logs icinga
         docker logs icingaweb
 
-As instructed in the logs, head to http://localhost:8080/icinga2/setup to interactively configure the web interface.
+As instructed in the logs, head to http://localhost:8080/setup to interactively configure the web interface.
 
 With the above container configuration, you need to know the following parameter:
   - Setup Token: See logs of mwaeckerlin/icingaweb2, e.g. `docker logs icingaweb`
