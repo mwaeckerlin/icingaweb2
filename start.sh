@@ -131,7 +131,7 @@ sed -i 's,;*date.timezone =.*,date.timezone = "'${TIMEZONE}'",g' \
     /etc/php/7.0/apache2/php.ini
 test -d /var/log/icingaweb2 || mkdir -p /var/log/icingaweb2
 chown www-data.www-data /var/log/icingaweb2
-sed -i "s,web_url = .*,web_url = ${GRAPHITE_WEB}," /etc/icingaweb2/modules/graphite/config.ini
+#sed -i "s,web_url = .*,web_url = ${GRAPHITE_WEB}," /etc/icingaweb2/modules/graphite/config.ini
 sed -i "s,Alias.*,Alias ${WEBROOT%/}/ /usr/share/icingaweb2/public/,;s,RewriteBase.*,RewriteBase ${WEBROOT%/}/," /etc/apache2/conf-available/icingaweb2.conf
 echo "**** Configuration done."
 echo "To setup, head your browser to (port can be different):"
