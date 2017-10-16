@@ -14,11 +14,13 @@ RUN apt-get update -y && apt-get install -y icingaweb2 libapache2-mod-php php-cu
 RUN git clone https://github.com/Icinga/icingaweb2-module-director.git /usr/share/icingaweb2/modules/director
 RUN git clone https://github.com/Icinga/icingaweb2-module-graphite /usr/share/icingaweb2/modules/graphite
 RUN mkdir -p /etc/icingaweb2/modules/graphite
-RUN cp -rv sample-config/icinga2/* /etc/icingaweb2/modules/graphite/
+RUN cp -rv /usr/share/icingaweb2/modules/graphite/sample-config/icinga2/* /etc/icingaweb2/modules/graphite/
 RUN chown -R root:icingaweb2 /etc/icingaweb2/modules/graphite
 RUN chmod -R 2755 /etc/icingaweb2/modules/graphite
-RUN sed -i 's,web_url = .*,web_url = ${GRAPHITE_WEB}' /etc/icingaweb2/modules/graphite/config.ini
-RUN touch /firstrun
+RUN sed -i "s,web_url = .*,web_url = ${GRAPHITE_WEB}," /etc/icingaweb2/modules/graphite/config.ini
+RUN a2dissite 000-default
+ADD apache.conf /etc/apache2/sites-available/icingaweb2.conf
+RUN a2ensite icingaweb2
 
 ADD start.sh /start.sh
 CMD /start.sh

@@ -63,7 +63,13 @@ With the above container configuration, you need to know the following parameter
      - Character Set: `utf8`
   - Command Transport:
      - Transport Name: `icinga2`, or whatever you want
-     - Command File: `/var/run/icinga2/cmd/icinga2.cmd` (this path is mandatory)
+     - either Transport Type: `Icinga 2 API`
+        - Host: `icinga`, second part from `--link`
+        - Port: `5665`
+        - API Username: `director`, `DIRECTOR_USER` or `Director module user` from `docker logs icinga`
+        - API Password: …, `DIRECTOR_PW` or `Director module password` from `docker logs icinga`
+     - or Transport Type: `Local Command File`
+        - Command File: `/var/run/icinga2/cmd/icinga2.cmd` (this path is mandatory)
   - Monitoring Security:
      - Protected Custom Variables: `*pw*,*pass*,community` (default is fine)
 
